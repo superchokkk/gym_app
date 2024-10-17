@@ -2,10 +2,12 @@
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_management/pages/common/constants/button_configs.dart';
+import 'package:gym_management/pages/common/constants/ButtonConfig.dart';
 import 'package:gym_management/pages/dashboard_page/navigation/DashboardNavigationItems.dart';
 
 class DashboardNavigation extends StatelessWidget {
+
+  final ButtonConfigs btnConfig = ButtonConfigs();
 
   DashboardNavigation({super.key});
 
@@ -15,10 +17,10 @@ class DashboardNavigation extends StatelessWidget {
       height: 120,
       width: double.infinity,
       child: ListView.builder(       
-        itemCount: dashboardNavigationItems.length,
+        itemCount: btnConfig.dashboardNavigationItems.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
-          final item = dashboardNavigationItems[index];
+          final item = btnConfig.dashboardNavigationItems[index];
           return DashboardNavigationItems(
             itemText: Text(
               item.text,
