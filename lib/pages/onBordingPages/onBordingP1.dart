@@ -1,19 +1,17 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
-import 'package:gym_management/pages/dashboard_page/DashboardPage.dart';
-import 'package:gym_management/pages/onBordingPages/onBordingP1.dart';
+import 'package:gym_management/pages/onBordingPages/onBordingP2.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage ({super.key});
+class Onbordingp1 extends StatefulWidget {
+  const Onbordingp1({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<Onbordingp1> createState() => _Onbordingp1();
 }
 
-class _LoginPageState extends State<LoginPage> {
-
+class _Onbordingp1 extends State<Onbordingp1> {
+  
+  //variavel e funcao onPressedBtn repeditas
   Color btnColor = ColorsConst.btnLoginColor;
 
   void onPressedBtn() {
@@ -29,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -42,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
           )
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top: 80),
+          padding: const EdgeInsets.only(top: 40),
           child: Column(
             children: [
               SizedBox(
@@ -50,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: 150,
                 child: Image.asset('assets/img/logo.png'),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 10),
               SizedBox(
                 width: 300,
                 child: Column(
@@ -112,8 +110,40 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 50),
+                    const Text(
+                      'Confirme senha:',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                      ),
                      ),
-                    const SizedBox(height: 80),
+                     const Center(
+                      child: SizedBox(
+                        width: 300,
+                        child: TextField(
+                          obscureText: true,
+                          keyboardType: TextInputType.visiblePassword,
+                          cursorColor: Colors.white,
+                          decoration: InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white, width: 1.5),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white, width: 1.5),
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
+                        ),
+                      ),
+                    ),
+                     
+                    const SizedBox(height: 50),
                     Center(
                       child: SizedBox(
                         width: 200,
@@ -123,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressedBtn();
                             Navigator.push(
                               context, 
-                              MaterialPageRoute(builder: (context) => const DashboardPage()),
+                              MaterialPageRoute(builder: (context) => const Onbordingp2()),
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -144,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               Text(
-                                'Entrar',
+                                'Criar conta',
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.white,
@@ -161,42 +191,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       )
-                    ),
-                    SizedBox(
-                      child: Center(
-                        child: TextButton(
-                          onPressed: () {
-                            print("esqueceu a senha?");
-                          },
-                          child: const Text(
-                            'Esqueceu a senha?',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      child: Center(
-                        child: TextButton(
-                          onPressed: () {
-                            onPressedBtn();
-                            Navigator.push(
-                              context, 
-                              MaterialPageRoute(builder: (context) => const Onbordingp1()),
-                            );
-                          },
-                          child: const Text(
-                            'criar conta',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
                     ),
                   ],
                 ),
