@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/TextStylesConst.dart';
-import 'package:gym_management/pages/common/constants/button_configs.dart';
+import 'package:gym_management/pages/common/constants/ButtonConfig.dart';
 import 'package:gym_management/pages/dashboard_page/slider/btn/DashboardImageBtn.dart';
 import 'package:gym_management/pages/dashboard_page/slider/dots/DotsSliderController.dart';
 import 'package:gym_management/pages/dashboard_page/slider/img_slide/ImageSlide.dart';
@@ -15,6 +15,8 @@ class DashboardSlider extends StatefulWidget {
 }
 
 class _DashboardSliderState extends State<DashboardSlider> {
+
+  ButtonConfigs navBtn = ButtonConfigs();
 
   final List<String> imagePaths = [
     'assets/img/bfimage.png',
@@ -56,10 +58,10 @@ class _DashboardSliderState extends State<DashboardSlider> {
                           alignment: Alignment.topCenter,
                           child: DashboardImageBtn(
                             btnText: Text(
-                              dashboardSliderButtonsConfig[index]['text'],
+                              navBtn.dashboardSliderButtonsConfig[index]['text'],
                               style: TextStylesConst.dashboardSliderBtnTextStyle,
                             ),
-                            onPressed: dashboardSliderButtonsConfig[index]['onPressed'],
+                            onPressed: navBtn.dashboardSliderButtonsConfig[index]['onPressed'],
                           ),
                         ),
                     ],

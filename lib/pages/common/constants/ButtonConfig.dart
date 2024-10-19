@@ -1,7 +1,10 @@
+// ignore_for_file: file_names
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gym_management/pages/dashboard_page/navigation/NavigationItem.dart';
 
-final List<NavigationItem> dashboardNavigationItems= [
+class ButtonConfigs {
+  final List<NavigationItem> dashboardNavigationItems= [
     NavigationItem(
       text: 'Evolução',
       icon: FontAwesomeIcons.chartSimple,
@@ -39,8 +42,7 @@ final List<NavigationItem> dashboardNavigationItems= [
     ),
   ];
 
-
-final List<Map<String, dynamic>> dashboardSliderButtonsConfig = [
+  final List<Map<String, dynamic>> dashboardSliderButtonsConfig = [
   {
     'text': 'Solicitar Avaliação',
     'onPressed': () {
@@ -54,3 +56,5 @@ final List<Map<String, dynamic>> dashboardSliderButtonsConfig = [
     },
   }
 ];
+
+}
