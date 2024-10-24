@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import 'package:gym_management/pages/onBordingPages/onBordingP2.dart';
+import 'package:gym_management/pages/login_page/LoginPage.dart';
 
 class Onbordingp1 extends StatefulWidget {
   const Onbordingp1({super.key});
@@ -25,9 +26,12 @@ class _Onbordingp1 extends State<Onbordingp1> {
       });
     });
   }
+  
 
   @override
   Widget build(BuildContext context){
+    double largura = MediaQuery.of(context).size.width;
+    double altura  = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -40,15 +44,51 @@ class _Onbordingp1 extends State<Onbordingp1> {
           )
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top: 40),
+          padding: const EdgeInsets.only(top: 0),
           child: Column(
+            //esse botao
             children: [
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerLeft, // Alinha no canto esquerdo
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: SizedBox(
+                    width: largura * 0.14,
+                    height: altura * 0.05,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        onPressedBtn();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: btnColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: const Text(
+                        "X",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              
               SizedBox(
                 height: 150,
                 width: 150,
                 child: Image.asset('assets/img/logo.png'),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               SizedBox(
                 width: 300,
                 child: Column(
