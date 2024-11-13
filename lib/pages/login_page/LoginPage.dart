@@ -3,18 +3,23 @@
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import 'package:gym_management/pages/dashboard_page/DashboardPage.dart';
-import 'package:gym_management/pages/onBordingPages/onBordingP1.dart';
+import 'package:gym_management/pages/onBordingPages/onBordingP2.dart'; //falta colocar cache para se for a primeira vez entrando
+import 'cpfEmail.dart';
+import 'ncadastrado.dart';
+import 'perguntas.dart';
+import '../../pesquisaDb.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage ({super.key});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-
+  String userEmailCpf = "";
   Color btnColor = ColorsConst.btnLoginColor;
+  Color corPergunta = Colors.white;
 
   void onPressedBtn() {
     setState(() {
@@ -39,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             colors: ColorsConst.blacksBackgroundsSplashPage,
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-          )
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.only(top: 80),
@@ -50,81 +55,55 @@ class _LoginPageState extends State<LoginPage> {
                 width: 150,
                 child: Image.asset('assets/img/logo.png'),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 75),
               SizedBox(
                 width: 300,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Email:', 
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    // Usa ValueKey como cor para quando mudar a cor, caregar no mesmo elemento
+                    PerguntaLogin(
+                      key: ValueKey(corPergunta),
+                      cor: corPergunta,
+                      onValueChanged: (valor) {
+                        setState(() {
+                          userEmailCpf = valor;
+                        });
+                      },
                     ),
-                    const Center(
-                      child: TextField(
-                        keyboardType: TextInputType.emailAddress,
-                        cursorColor: Colors.white,
-                        decoration: InputDecoration(
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white, width: 1.5),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white, width: 1.5),
-                          ),
-                        ),
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 50),
-                    const Text(
-                      'Senha:',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold
-                      ),
-                     ),
-                     const Center(
-                      child: SizedBox(
-                        width: 300,
-                        child: TextField(
-                          obscureText: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          cursorColor: Colors.white,
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white, width: 1.5),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white, width: 1.5),
-                            ),
-                          ),
-                          style: TextStyle(
-                            color: Colors.white
-                          ),
-                        ),
-                      ),
-                     ),
-                    const SizedBox(height: 80),
+                    //falta colocar senha qui
+                    const SizedBox(height: 225),
                     Center(
                       child: SizedBox(
                         width: 200,
                         height: 65,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            int aux = checaResp(userEmailCpf);
+                            setState(() {
+                              if (aux == 0) {
+                                corPergunta =
+                                    Colors.red; // Muda a cor para vermelho
+                              }
+                            });
                             onPressedBtn();
-                            Navigator.push(
-                              context, 
-                              MaterialPageRoute(builder: (context) => const DashboardPage()),
-                            );
+                            if (aux != 0) {
+                              if (await checkEmailOrCpf(userEmailCpf)) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DashboardPage()),
+                                );
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const Ncadastrado()),
+                                );
+                              }
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: btnColor,
@@ -137,8 +116,8 @@ class _LoginPageState extends State<LoginPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Flexible(child: 
-                                Icon(
+                              Flexible(
+                                child: Icon(
                                   Icons.fitness_center,
                                   color: Colors.white,
                                 ),
@@ -151,49 +130,13 @@ class _LoginPageState extends State<LoginPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Flexible(child: 
-                                Icon(
+                              Flexible(
+                                child: Icon(
                                   Icons.fitness_center,
                                   color: Colors.white,
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-                      )
-                    ),
-                    SizedBox(
-                      child: Center(
-                        child: TextButton(
-                          onPressed: () {
-                            print("esqueceu a senha?");
-                          },
-                          child: const Text(
-                            'Esqueceu a senha?',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      child: Center(
-                        child: TextButton(
-                          onPressed: () {
-                            onPressedBtn();
-                            Navigator.push(
-                              context, 
-                              MaterialPageRoute(builder: (context) => const Onbordingp1()),
-                            );
-                          },
-                          child: const Text(
-                            'criar conta',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
                           ),
                         ),
                       ),

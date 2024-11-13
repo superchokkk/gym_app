@@ -13,13 +13,15 @@ class Aluno extends Pessoa {
          cpf, 
          idade, 
          dataNascimento, 
-         endereco
+         endereco,
+         log
        )
     : super( id: id, 
              nome: nome, 
              cpf: cpf, 
              idade: idade, 
              dataNascimento: dataNascimento, 
-             endereco: endereco
+             endereco: endereco,
+             log: log
            );
 }

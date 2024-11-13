@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:gym_management/pages/common/constants/ColorsConst.dart';
+//import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import 'package:gym_management/pages/dashboard_page/footer/buttons/FooterButtons.dart';
 
 class DashboardFooter extends StatelessWidget {
