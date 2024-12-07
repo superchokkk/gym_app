@@ -58,13 +58,13 @@ class getId(BaseModel):
 def obterCliente(request: getId, sessao: Session = Depends(get_session)):
     try:
         referencia = request.busca
-        client = sessao.query(Cliente).filter(Cliente.cpf == str(referencia)).first()  # Ensure types match
+        client = sessao.query(Cliente).filter(or_(Cliente.cpf == str(referencia), Cliente.email == str(referencia))).first()  # Ensure types match
         
         if not client:
             return {
-                "id":    False, "nome":  False, "cpf":   False,
-                "email": False, "senha": False, "nivel": False,
-                "idade": False, "peso":  False, "altura":False, 
+                "id":    0, "nome":  "", "cpf":   0,
+                "email": "", "senha": "", "nivel": 9,
+                "idade": 0, "peso":  0, "altura":0, 
             }
             
         return {

@@ -1,5 +1,3 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/dashboard_page/footer/DashboardFooter.dart';
 import 'package:gym_management/pages/dashboard_page/header/DashboardHeader.dart';
@@ -18,6 +16,9 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenHeight = screenSize.height;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -26,28 +27,47 @@ class _DashboardPageState extends State<DashboardPage> {
           color: Color(0xFF121212),
         ),
         child: SafeArea(
-          child: Column(
-            children: <Widget>[
-              // # Header
-              DashboardHeader(cliente: widget.cliente),
-              // # NAVIGATION
-              Padding(
-                padding: const EdgeInsets.only(top: 15, bottom: 25),
-                child: DashboardNavigation(),
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: screenHeight,
               ),
-              // # SLIDES
-              const Padding(
-                padding: EdgeInsets.only(top: 5, right: 1),
-                child: DashboardSlider(),
+              child: Column(
+                children: <Widget>[
+                  // Header
+                  DashboardHeader(cliente: widget.cliente),
+                  
+                  // Navigation
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.02,
+                      horizontal: 16,
+                    ),
+                    child: DashboardNavigation(),
+                  ),
+                  
+                  // Slides
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.01,
+                      horizontal: 8,
+                    ),
+                    child: const DashboardSlider(),
+                  ),
+                  
+                  // Footer buttons
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: screenHeight * 0.03,
+                      bottom: screenHeight * 0.02,
+                    ),
+                    child: const Center(
+                      child: DashboardFooter(),
+                    ),
+                  ),
+                ],
               ),
-              // # FOOTER BUTTONS
-              const Padding(
-                padding: EdgeInsets.only(top: 25),
-                child: Center(
-                  child: DashboardFooter(),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

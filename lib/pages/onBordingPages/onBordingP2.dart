@@ -12,7 +12,6 @@ class Onbordingp2 extends StatefulWidget {
 }
 
 class _Onbordingp2State extends State<Onbordingp2> {
-  // Variáveis para alterar a cor do botão
   Color btnColor = ColorsConst.btnLoginColor;
 
   void onPressedBtn() {
@@ -20,7 +19,6 @@ class _Onbordingp2State extends State<Onbordingp2> {
       btnColor = ColorsConst.btnLoginColorPressed;
     });
 
-    // Reseta a cor do botão após um curto delay
     Future.delayed(const Duration(milliseconds: 150), () {
       setState(() {
         btnColor = ColorsConst.btnLoginColor;
@@ -30,6 +28,16 @@ class _Onbordingp2State extends State<Onbordingp2> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenHeight = screenSize.height;
+    final double screenWidth = screenSize.width;
+
+    // Calculate responsive sizes
+    final double logoSize = screenWidth * 0.3.clamp(100.0, 150.0);
+    final double textWidth = screenWidth * 0.8.clamp(280.0, 400.0);
+    final double buttonWidth = screenWidth * 0.5.clamp(180.0, 200.0);
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -41,89 +49,95 @@ class _Onbordingp2State extends State<Onbordingp2> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: Column(
-            children: [
-              // Logo
-              SizedBox(
-                height: 150,
-                width: 150,
-                child: Image.asset('assets/img/logo.png'),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.05,
+                horizontal: screenWidth * 0.05,
               ),
-
-              // Mensagem de boas-vindas
-              Container(
-                width: 300,
-                margin: const EdgeInsets.all(75.0),
-                child: const Text(
-                  'Bem vindo ao seu novo app para uma vida melhor :)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: logoSize,
+                    width: logoSize,
+                    child: Image.asset('assets/img/logo.png'),
                   ),
-                ),
-              ),
 
-              const SizedBox(height: 80),
-
-              // Botão de navegação
-              Center(
-                child: SizedBox(
-                  width: 200,
-                  height: 65,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      onPressedBtn();
-
-                      // Navegação para a DashboardPage com o objeto Cliente
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DashboardPage(cliente: widget.cliente),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: btnColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  Container(
+                    width: textWidth,
+                    margin: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.08,
+                      horizontal: screenWidth * 0.05,
+                    ),
+                    child: Text(
+                      'Bem vindo ao seu novo app para uma vida melhor :)',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: screenWidth < 600 ? 20 : 25,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        Flexible(
-                          child: Icon(
-                            Icons.fitness_center,
-                            color: Colors.white,
+                  ),
+
+                  SizedBox(height: screenHeight * 0.08),
+
+                  Center(
+                    child: SizedBox(
+                      width: buttonWidth,
+                      height: 65,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          onPressedBtn();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DashboardPage(cliente: widget.cliente),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: btnColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        Text(
-                          'Entrar',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Flexible(
+                              child: Icon(
+                                Icons.fitness_center,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              'Entrar',
+                              style: TextStyle(
+                                fontSize: screenWidth < 600 ? 16 : 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Flexible(
+                              child: Icon(
+                                Icons.fitness_center,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
-                        Flexible(
-                          child: Icon(
-                            Icons.fitness_center,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
