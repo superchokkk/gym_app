@@ -3,11 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import 'package:gym_management/pages/dashboard_page/DashboardPage.dart';
-import 'package:gym_management/pages/onBordingPages/onBordingP2.dart'; //falta colocar cache para se for a primeira vez entrando
+import 'package:gym_management/pages/onBordingPages/onBordingP2.dart';//adicionar algo para ver se é a primeira vez logando
 import 'cpfEmail.dart';
 import 'ncadastrado.dart';
 import 'perguntas.dart';
-import '../../pesquisaDb.dart';
+import '../../../api/perguntasLogin.dart';
+import '../../domain/models/Cliente.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,20 +18,43 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  late Future<Cliente> futureClient;
   String userEmailCpf = "";
   Color btnColor = ColorsConst.btnLoginColor;
   Color corPergunta = Colors.white;
 
-  void onPressedBtn() {
-    setState(() {
-      btnColor = ColorsConst.btnLoginColorPressed;
-    });
+  Future<Cliente> ponteLogin(String ref) async {
+    return obtemCliente(ref); // Busca os dados do cliente
+  }
 
-    Future.delayed(const Duration(milliseconds: 150), () {
-      setState(() {
-        btnColor = ColorsConst.btnLoginColor;
-      });
-    });
+  Future<void> handleLogin() async {
+    if (!checaResp(userEmailCpf)) {
+      setState(() => corPergunta = Colors.red);
+      return;
+    }
+
+    try {
+      final cliente = await ponteLogin(userEmailCpf);
+      if (cliente.id != false) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DashboardPage(cliente: cliente),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Ncadastrado(),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao fazer login: $e')),
+      );
+    }
   }
 
   @override
@@ -61,7 +85,6 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Usa ValueKey como cor para quando mudar a cor, caregar no mesmo elemento
                     PerguntaLogin(
                       key: ValueKey(corPergunta),
                       cor: corPergunta,
@@ -71,40 +94,13 @@ class _LoginPageState extends State<LoginPage> {
                         });
                       },
                     ),
-                    //falta colocar senha qui
                     const SizedBox(height: 225),
                     Center(
                       child: SizedBox(
                         width: 201,
                         height: 65,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            int aux = checaResp(userEmailCpf);
-                            setState(() {
-                              if (aux == 0) {
-                                corPergunta =
-                                    Colors.red; // Muda a cor para vermelho
-                              }
-                            });
-                            onPressedBtn();
-                            if (aux != 0) {
-                              if (await checkEmailOrCpf(userEmailCpf)) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const DashboardPage()),
-                                );
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const Ncadastrado()),
-                                );
-                              }
-                            }
-                          },
+                          onPressed: handleLogin, // Chama a função handleLogin
                           style: ElevatedButton.styleFrom(
                             backgroundColor: btnColor,
                             shape: RoundedRectangleBorder(

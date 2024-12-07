@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 class NavigationItem {
   final String text;
   final IconData icon;
-  final VoidCallback onPressed;
-
+  final void Function(BuildContext) onPressed;
+  
   NavigationItem({
     required this.text,
     required this.icon,

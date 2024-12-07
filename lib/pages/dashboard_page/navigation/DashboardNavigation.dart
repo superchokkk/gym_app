@@ -35,7 +35,7 @@ class DashboardNavigation extends StatelessWidget {
               color: Colors.white,
               size: 25,
             ),
-            onPressed: item.onPressed,
+            onPressed: () => item.onPressed(context),
           );
         },
       ),

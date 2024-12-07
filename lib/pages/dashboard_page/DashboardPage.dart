@@ -5,9 +5,11 @@ import 'package:gym_management/pages/dashboard_page/footer/DashboardFooter.dart'
 import 'package:gym_management/pages/dashboard_page/header/DashboardHeader.dart';
 import 'package:gym_management/pages/dashboard_page/navigation/DashboardNavigation.dart';
 import 'package:gym_management/pages/dashboard_page/slider/DashboardSlider.dart';
+import '../../domain/models/Cliente.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  final Cliente cliente;
+  const DashboardPage({required this.cliente, super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -27,7 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Column(
             children: <Widget>[
               // # Header
-              const DashboardHeader(),
+              DashboardHeader(cliente: widget.cliente),
               // # NAVIGATION
               Padding(
                 padding: const EdgeInsets.only(top: 15, bottom: 25),

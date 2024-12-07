@@ -1,9 +1,11 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/login_page/LoginPage.dart';
+import '../../../domain/models/Cliente.dart';
 
 class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({super.key});
+  final Cliente cliente;
+  const DashboardHeader({required this.cliente, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,7 @@ class DashboardHeader extends StatelessWidget {
             top: 185,
             left: 20,
             child: Text(
-              'Olá, Junior!',
+              'Ola, ${cliente.nome}!',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 23,
