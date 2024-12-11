@@ -10,14 +10,10 @@ class GymManagementApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Gym Management',
-      routes: {
-        '/treino': (context) => TreinoPage()
-      },
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
       home: const SafeArea(child: SplashPage()),
     );
-    
   }
 }

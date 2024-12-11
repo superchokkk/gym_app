@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import 'package:gym_management/pages/dashboard_page/DashboardPage.dart';
+import 'package:gym_management/pages/login_page/senhaPage.dart';
 import 'package:gym_management/pages/onBordingPages/onBordingP2.dart';
 import 'cpfEmail.dart';
 import 'ncadastrado.dart';
@@ -26,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   Color corPergunta = Colors.white;
 
   Future<Cliente> ponteLogin(String ref) async {
-    return obtemCliente(ref);
+    return fecthClientes(ref);
   }
 
   Future<void> handleLogin() async {
@@ -41,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => DashboardPage(cliente: cliente),
+            builder: (context) => Senhapage(cliente: cliente),
           ),
         );
       } else {
@@ -61,16 +62,15 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     final Size screenSize = MediaQuery.of(context).size;
     final double screenHeight = screenSize.height;
     double screenWidth = screenSize.width;
-    
+
     final double logoSize = screenWidth * 0.3;
     final double maxLogoSize = 150.0;
     final double minLogoSize = 100.0;
     final double actualLogoSize = logoSize.clamp(minLogoSize, maxLogoSize);
-    
+
     final double topPadding = screenHeight * 0.1;
     final double horizontalPadding = screenWidth * 0.05;
 
@@ -108,27 +108,26 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: screenHeight * 0.08),
                     ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 600
-                      ),
+                      constraints: BoxConstraints(maxWidth: 600),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           PerguntaLogin(
                             key: ValueKey(corPergunta),
                             cor: corPergunta,
+                            labelText:
+                                'Email ou cpf',
                             onValueChanged: (valor) {
                               setState(() {
                                 userEmailCpf = valor;
                               });
                             },
                           ),
-                          
                           SizedBox(height: screenHeight * 0.15),
-                          
                           Center(
                             child: SizedBox(
-                              width: screenWidth < 600 ? screenWidth * 0.6 : 201,
+                              width:
+                                  screenWidth < 600 ? screenWidth * 0.6 : 201,
                               height: 65,
                               child: ElevatedButton(
                                 onPressed: handleLogin,
@@ -140,7 +139,8 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     const Flexible(

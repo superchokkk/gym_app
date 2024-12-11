@@ -16,7 +16,7 @@ class DashboardSlider extends StatefulWidget {
 
 class _DashboardSliderState extends State<DashboardSlider> {
 
-  ButtonConfigs navBtn = ButtonConfigs();
+  ButtonConfigs navBtn = ButtonConfigs(clienteId: 2);
 
   final List<String> imagePaths = [
     'assets/img/bfimage.png',

@@ -6,10 +6,15 @@ import 'package:gym_management/pages/common/constants/ButtonConfig.dart';
 import 'package:gym_management/pages/dashboard_page/navigation/DashboardNavigationItems.dart';
 
 class DashboardNavigation extends StatelessWidget {
+  final int clienteId;
+  late final ButtonConfigs btnConfig;
 
-  final ButtonConfigs btnConfig = ButtonConfigs();
-
-  DashboardNavigation({super.key});
+  DashboardNavigation({
+    super.key,
+    required this.clienteId,
+  }) {
+    btnConfig = ButtonConfigs(clienteId: clienteId);
+  }
 
   @override
   Widget build(BuildContext context) {

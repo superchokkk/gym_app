@@ -43,7 +43,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       vertical: screenHeight * 0.02,
                       horizontal: 16,
                     ),
-                    child: DashboardNavigation(),
+                    child: DashboardNavigation(clienteId: widget.cliente.id),
                   ),
                   
                   // Slides

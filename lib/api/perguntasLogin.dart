@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
 import '../domain/models/Cliente.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<Cliente> obtemCliente(String ref) async {
+Future<Cliente> fecthClientes(String ref) async {
   final parametro = jsonEncode({'busca': ref});
-  print('Sending request with parameter: $parametro'); // Log request
+  print('Sending request with parameter: $parametro');
 
   try {
     final url = Uri.parse("http://localhost:57800/buscaCliente");
@@ -22,7 +21,7 @@ Future<Cliente> obtemCliente(String ref) async {
       throw Exception('API Error: ${response.statusCode}');
     }
   } catch (e) {
-    print('Error details: $e'); // Log detailed error
+    print('Error details: $e');
     throw Exception('API Connection Error: $e');
   }
 }

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
-from sqlalchemy import create_engine, Column, Integer, String, BigInteger, Double,or_
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Double,or_
+from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -16,20 +16,22 @@ def get_session():
         session.close()
 base = declarative_base()
 
+#classe cliente
 class Cliente(base):
     __tablename__ = 'clientes'
     id = Column('id', Integer, primary_key=True, autoincrement=True)
-    nome = Column('nome', String(100), nullable=False)  # Adicionado length
+    nome = Column('nome', String(100), nullable=False)
     cpf = Column('cpf', Integer, unique=True, nullable=False)
     email = Column('email', String(100), unique=True, nullable=False)
     senha = Column('senha', String(100), nullable=False)
-    nivel = Column('nivel', Integer, nullable=False)  # Adicionado length
+    nivel = Column('nivel', Integer, nullable=False)
     idade = Column('idade', Integer)
     peso = Column('peso', Double)
-    altura = Column('altura', Integer)  # Adicionado length
-    
+    altura = Column('altura', Integer)
 
-    def __init__(self, nome, cpf, email, idade, peso, altura, senha, nivel):  # Added default value
+    treinos = relationship("Treino", back_populates="cliente")
+
+    def __init__(self, nome, cpf, email, idade, peso, altura, senha, nivel):
         self.nome = nome
         self.cpf = cpf
         self.email = email
@@ -38,11 +40,25 @@ class Cliente(base):
         self.idade = idade
         self.peso = peso
         self.altura = altura
-        
+
+#classe treino
+class Treino(base):
+    __tablename__ = 'treinos'
+    id = Column('id', Integer, primary_key=True, autoincrement=True)
+    id_cliente = Column('id_cliente', Integer, ForeignKey('clientes.id'), nullable=False)  
+    nome = Column('nome', String(100), nullable=False)
+
+    cliente = relationship("Cliente", back_populates="treinos")
+
+    def __init__(self, id_cliente, nome):
+        self.id_cliente = id_cliente
+        self.nome = nome
+
 
 base.metadata.create_all(bind=db)
+#-----------final das classes-----------
 
-
+#-----------começo das buscas-----------
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -81,6 +97,28 @@ def obterCliente(request: getId, sessao: Session = Depends(get_session)):
         }
     except Exception as e:
         return {"error": str(e)}
+    
+@app.post("/buscaTreinos")
+def obtemTreinos(referencia, sessao: Session = Depends(get_session)):
+    try:
+        treinos = sessao.query(Treino).filter(Treino.id_cliente == referencia).all()
+        
+        if not treinos:
+            return {"message": "Nenhum treino encontrado para o cliente."}
+
+            
+        return [
+            {
+                "id": treino.id,
+                "id_cliente": treino.id_cliente,
+                "nome": treino.nome,
+            }
+            for treino in treinos
+        ]
+    
+    except Exception as e:
+        return {"error": str(e)}
+
         
 if __name__ == "__main__":
     import uvicorn

@@ -6,7 +6,11 @@ import 'package:gym_management/pages/dashboard_page/navigation/NavigationItem.da
 import '../../slideButtons/treino.dart';
 
 class ButtonConfigs {
-  final List<NavigationItem> dashboardNavigationItems = [
+  final int clienteId;
+  
+  ButtonConfigs({required this.clienteId});
+
+  List<NavigationItem> get dashboardNavigationItems => [
     NavigationItem(
       text: 'Evolução',
       icon: FontAwesomeIcons.dumbbell,
@@ -18,7 +22,12 @@ class ButtonConfigs {
       text: 'Treinos',
       icon: FontAwesomeIcons.dumbbell,
       onPressed: (context) {
-        Navigator.pushNamed(context, '/treino');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TreinoPage(clienteId: clienteId),
+          ),
+        );
       },
     ),
     NavigationItem(
@@ -44,7 +53,7 @@ class ButtonConfigs {
     ),
   ];
 
-  final List<Map<String, dynamic>> dashboardSliderButtonsConfig = [
+  List<Map<String, dynamic>> get dashboardSliderButtonsConfig => [
     {
       'text': 'Solicitar Avaliação',
       'onPressed': () {

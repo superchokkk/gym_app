@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class PerguntaLogin extends StatefulWidget {
   final Color cor;
   final void Function(String) onValueChanged;
+  final String labelText; // New parameter for custom label text
 
   const PerguntaLogin({
     Key? key,
     required this.cor,
     required this.onValueChanged,
+    required this.labelText, // Added required parameter
   }) : super(key: key);
 
   @override
@@ -38,7 +40,7 @@ class _PerguntaLoginState extends State<PerguntaLogin> {
   Widget build(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
-        labelText: 'email ou cpf',
+        labelText: widget.labelText, // Using the custom label text
         labelStyle: TextStyle(color: corAtual),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: corAtual, width: 2.0),
