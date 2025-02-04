@@ -13,7 +13,7 @@ class DashboardNavigation extends StatelessWidget {
     super.key,
     required this.clienteId,
   }) {
-    btnConfig = ButtonConfigs(clienteId: clienteId);
+    btnConfig = ButtonConfigs(identidificador: clienteId);
   }
 
   @override

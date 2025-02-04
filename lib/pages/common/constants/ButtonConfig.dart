@@ -3,12 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gym_management/pages/dashboard_page/navigation/NavigationItem.dart';
-import '../../slideButtons/treino.dart';
+import '../../slideButtons/treino/treino.dart';
 
 class ButtonConfigs {
-  final int clienteId;
+  final int identidificador;
   
-  ButtonConfigs({required this.clienteId});
+  ButtonConfigs({required this.identidificador});
 
   List<NavigationItem> get dashboardNavigationItems => [
     NavigationItem(
@@ -25,7 +25,7 @@ class ButtonConfigs {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TreinoPage(clienteId: clienteId),
+            builder: (context) => TreinoPage(clienteId: identidificador),
           ),
         );
       },
@@ -47,6 +47,13 @@ class ButtonConfigs {
     NavigationItem(
       text: 'Ajuda',
       icon: FontAwesomeIcons.dumbbell,
+      onPressed: (context) {
+        Navigator.pushNamed(context, '/treino');
+      },
+    ),
+    NavigationItem(
+      text: "",
+      icon: FontAwesomeIcons.plus,
       onPressed: (context) {
         Navigator.pushNamed(context, '/treino');
       },

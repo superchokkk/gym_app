@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                             key: ValueKey(corPergunta),
                             cor: corPergunta,
                             labelText:
-                                'Email ou cpf',
+                                'cpf',
                             onValueChanged: (valor) {
                               setState(() {
                                 userEmailCpf = valor;

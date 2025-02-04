@@ -1,6 +1,6 @@
 class Treino {
   final int id;
-  final int id_cliente;
+  final String id_cliente;
   final String nome;
 
   Treino({
@@ -12,7 +12,7 @@ class Treino {
   factory Treino.fromJson(Map<String, dynamic> json) {
     return Treino(
       id: json['id'] ?? 0,
-      id_cliente: json['id_cliente'] ?? 0,
+      id_cliente: json['id_cliente']?.toString() ?? '',
       nome: json['nome'] ?? '',
     );
   }
