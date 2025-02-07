@@ -1,8 +1,12 @@
+from urllib import request
 from fastapi import FastAPI, Depends
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Double, or_, Date
+from flask import session, jsonify
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Double, or_, Date, select, func
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship, aliased
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+
 
 # Database configuration
 db = create_engine("mysql+mysqlconnector://root:@localhost:3306/testeacademia", echo=True)
@@ -177,6 +181,7 @@ def obtemExercicios(ref: GetReferencia, sessao: Session = Depends(get_session)):
             return []
         return [
             {
+                "id": exercicio.id,
                 "nome": exercicio.nome,
                 "id_grupo": exercicio.id_grupo
             }
@@ -184,6 +189,35 @@ def obtemExercicios(ref: GetReferencia, sessao: Session = Depends(get_session)):
         ]
     except Exception as e:
         return {"error":  str(e)}
+#----------------------------
+@app.get("/buscaEspecifico/{treino_id}/{exercicio_id}")
+async def ObtemExercicioEspecifico(treino_id: int, exercicio_id: int, sessao: Session = Depends(get_session)):
+    try:
+        query = sessao.query(TreinoExercicio).filter(
+            TreinoExercicio.id_treino == treino_id,
+            TreinoExercicio.id_exercicio == exercicio_id
+        ).order_by(TreinoExercicio.data)
+
+        resultados = query.all()
+        
+        # Printar os detalhes de cada treino exercício
+        for exercicio in resultados:
+            print("ID Treino:", exercicio.id_treino)
+            print("ID Exercício:", exercicio.id_exercicio)
+            print("Reps:", exercicio.reps)
+            print("Peso:", exercicio.peso)
+            print("Data:", exercicio.data)
+            print("---------------")
+
+        return JSONResponse(content=[{
+            "id": r.id,
+            "reps": r.reps,
+            "peso": r.peso,
+            "data": r.data.strftime("%Y-%m-%d")
+        } for r in resultados])
+    except Exception as e:
+        return {"error": str(e)}
+#----------------------------
 
 if __name__ == "__main__":
     import uvicorn

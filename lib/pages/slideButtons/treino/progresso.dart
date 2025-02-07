@@ -5,12 +5,12 @@ import '../../../api/perguntasExercicio.dart';
 
 class ProgressoPage extends StatefulWidget {
   final int treinoId;
-  final String treinoNome; // Added treinoNome parameter
+  final String treinoNome;
 
   const ProgressoPage({
     Key? key,
     required this.treinoId,
-    required this.treinoNome, // Added required treinoNome
+    required this.treinoNome,
   }) : super(key: key);
 
   @override
@@ -115,7 +115,7 @@ class _ProgressoPageState extends State<ProgressoPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                                     child: Text(
-                                      exercicio.nome, // Exercise name on the button
+                                      exercicio.nome,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,

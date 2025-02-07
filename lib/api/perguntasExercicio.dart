@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:gym_management/domain/models/Exercicio.dart';
 import 'package:http/http.dart' as http;
-import '../domain/models/Exercicio.dart';
 
 Future<List<Exercicio>> fetchExercicio(int referencia) async {
   final url = Uri.parse('http://localhost:57800/buscaExercicios');

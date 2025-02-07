@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import '../../../domain/models/Exercicio.dart';
 import '../../../api/perguntasExercicio.dart';
+import '../treino/especifico.dart';
 
 class ExerciciosPage extends StatefulWidget {
   final int treinoId;
-  final String treinoNome; // Added treinoNome parameter
+  final String treinoNome;
 
   const ExerciciosPage({
     Key? key,
     required this.treinoId,
-    required this.treinoNome, // Added required treinoNome
+    required this.treinoNome,
   }) : super(key: key);
 
   @override
@@ -19,7 +20,7 @@ class ExerciciosPage extends StatefulWidget {
 
 class _ExerciciosPageState extends State<ExerciciosPage> {
   late Future<List<Exercicio>> exerciciosFuture;
-  
+
   @override
   void initState() {
     super.initState();
@@ -87,12 +88,18 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
                     child: FutureBuilder<List<Exercicio>>(
                       future: exerciciosFuture,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
-                          return Center(child: Text('Erro ao carregar exercícios: ${snapshot.error}'));
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(child: Text('Nenhum exercício encontrado.'));
+                          return Center(
+                              child: Text(
+                                  'Erro ao carregar exercícios: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const Center(
+                              child: Text('Nenhum exercício encontrado.'));
                         } else {
                           final exercicios = snapshot.data!;
                           return ListView.builder(
@@ -100,22 +107,34 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
                             itemCount: exercicios.length,
                             itemBuilder: (context, index) {
                               final exercicio = exercicios[index];
-                              return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Ação futura para detalhes do exercício
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey,
-                                    shape: RoundedRectangleBorder(
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EspecificoPage(
+                                        treinoId: widget.treinoId,
+                                        exercicioId: exercicio.id,
+                                        exercicioNome: exercicio.nome,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                    alignment: Alignment.center,
                                     child: Text(
-                                      exercicio.nome, // Exercise name on the button
+                                      exercicio.nome,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
