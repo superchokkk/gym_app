@@ -24,7 +24,7 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
   int flagView = 0;
   final TextEditingController _repsController = TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -110,99 +110,7 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
       }
     }
   }
-  Future<void> _showAddSerieDialog() async {
-  _repsController.clear();
-  _pesoController.clear();
   
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Colors.grey[900],
-        title: const Text(
-          'Adicionar Série',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _repsController,
-              keyboardType: TextInputType.number,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Repetições',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _pesoController,
-              keyboardType: TextInputType.number,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Peso (kg)',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              if (_repsController.text.isNotEmpty && _pesoController.text.isNotEmpty) {
-                adicionarEspecifico(
-                  widget.treinoId,
-                  widget.exercicioId,
-                  int.parse(_repsController.text),
-                  int.parse(_pesoController.text),
-                );
-                
-                setState(() {
-                  exercisesFuture = fetchEspecifico(widget.treinoId, widget.exercicioId);
-                });
-                
-                Navigator.pop(context);
-                
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Série adicionada com sucesso!'),
-                    backgroundColor: Colors.green,
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              }
-            },
-            child: const Text(
-              'Adicionar',
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
-
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -406,7 +314,7 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
         ),
         child: FloatingActionButton(
           onPressed: () {
-            _showAddExercicioDialog();
+            
           },
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -419,6 +327,6 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
-    );
+    
   }
 }

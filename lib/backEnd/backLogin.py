@@ -1,4 +1,3 @@
-from urllib import request
 from fastapi import FastAPI, Depends
 from flask import session, jsonify
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Double, or_, Date, select, func
