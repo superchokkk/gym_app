@@ -22,11 +22,29 @@ class _senhaPage extends State<Senhapage> {
   Future<void> handleLogin() async {
     if(widget.cliente.senha == senha){
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DashboardPage(cliente: widget.cliente),
-          ),
-        );
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => DashboardPage(cliente: widget.cliente),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return ScaleTransition(
+            scale: Tween<double>(
+              begin: 0.0,
+              end: 1.0,
+            ).animate(
+              CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutQuart,
+              ),
+            ),
+            child: FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 230),
+      ),
+    );
     }else{
       setState(() => corPergunta = Colors.red);
     }

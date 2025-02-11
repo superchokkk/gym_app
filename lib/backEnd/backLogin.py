@@ -6,9 +6,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base, relationship, aliased
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
+from datetime import date
 
-
-# Database configuration
 db = create_engine("mysql+mysqlconnector://root:@localhost:3306/testeacademia", echo=True)
 Session = sessionmaker(bind=db)
 
@@ -85,22 +84,22 @@ class Exercicio(base):
 #classe treino exercicio
 class TreinoExercicio(base):
     __tablename__ = 'treinos_exercicios'
-    id = Column('id', Integer, primary_key=True, autoincrement=True)
+    id = Column('id', Integer, primary_key=True)
     id_treino = Column('id_treino', Integer, ForeignKey('treinos.id'), nullable=False)
     id_exercicio = Column('id_exercicio', Integer, ForeignKey('exercicios.id'), nullable=False)
     reps = Column('reps', Integer, nullable=False)
     peso = Column('peso', Double)
-    data = Column('data', Date, nullable=False)
+    data = Column('data', Date, default=date.today)
 
     treino = relationship("Treino", backref="treino_exercicios")
     exercicio = relationship("Exercicio", backref="treino_exercicios")
 
-    def __init__(self, id_treino, id_exercicio, reps, peso, data):
+    def __init__(self, id_treino, id_exercicio, reps, peso):
         self.id_treino = id_treino
         self.id_exercicio = id_exercicio
         self.reps = reps
         self.peso = peso
-        self.data = data
+        self.data = date.today()
 
 base.metadata.create_all(bind=db)
 #-----------final das classes-----------
@@ -127,7 +126,7 @@ def obterCliente(request: getId, sessao: Session = Depends(get_session)):
         
         if not client:
             return {
-                "id":    0, "nome":  "", "cpf":   0,
+                "id":    0, "nome":  "", "cpf":   "",
                 "email": "", "senha": "", "nivel": 9,
                 "idade": 0, "peso":  0, "altura":0, 
             }
@@ -191,7 +190,7 @@ def obtemExercicios(ref: GetReferencia, sessao: Session = Depends(get_session)):
         return {"error":  str(e)}
 #----------------------------
 @app.get("/buscaEspecifico/{treino_id}/{exercicio_id}")
-async def ObtemExercicioEspecifico(treino_id: int, exercicio_id: int, sessao: Session = Depends(get_session)):
+async def obtemExercicioEspecifico(treino_id: int, exercicio_id: int, sessao: Session = Depends(get_session)):
     try:
         query = sessao.query(TreinoExercicio).filter(
             TreinoExercicio.id_treino == treino_id,
@@ -199,15 +198,6 @@ async def ObtemExercicioEspecifico(treino_id: int, exercicio_id: int, sessao: Se
         ).order_by(TreinoExercicio.data)
 
         resultados = query.all()
-        
-        # Printar os detalhes de cada treino exercício
-        for exercicio in resultados:
-            print("ID Treino:", exercicio.id_treino)
-            print("ID Exercício:", exercicio.id_exercicio)
-            print("Reps:", exercicio.reps)
-            print("Peso:", exercicio.peso)
-            print("Data:", exercicio.data)
-            print("---------------")
 
         return JSONResponse(content=[{
             "id": r.id,
@@ -217,6 +207,50 @@ async def ObtemExercicioEspecifico(treino_id: int, exercicio_id: int, sessao: Se
         } for r in resultados])
     except Exception as e:
         return {"error": str(e)}
+#----------------------------
+@app.delete("/deletarSerie/{especifico_id}")
+def deletarSerie(especifico_id: int, sessao: Session = Depends(get_session)):
+    try:
+        serie = sessao.query(TreinoExercicio).filter(TreinoExercicio.id == especifico_id).first()
+        if not serie:
+            return JSONResponse(status_code=404, content={"message": "Série não encontrada"})
+        
+        sessao.delete(serie)
+        sessao.commit()
+        return {"message": "Série deletada com sucesso"}
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(status_code=500, content={"error": str(e)})
+#----------------------------
+@app.post("/adicionarSerie/{treino_id}/{exercicio_id}/{reps}/{peso}")
+def adicionarSerie(treino_id: int, exercicio_id: int, reps: int, peso: int, sessao: Session = Depends(get_session)):
+    try:
+        novaSerie = TreinoExercicio(treino_id, exercicio_id, reps, peso)
+        sessao.add(novaSerie)
+        sessao.commit()
+        return {"message": "Série adicionada com sucesso"}
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(status_code=500, content={"error": str(e)})
+#----------------------------
+@app.delete("/deletarExercicio/{treino_id}/{exercicio_id}")
+def deletarExercicioTreino(treino_id: int, exercicio_id: int, sessao: Session = Depends(get_session)):
+    try:
+        series = sessao.query(TreinoExercicio).filter(
+            TreinoExercicio.id_treino == treino_id,
+            TreinoExercicio.id_exercicio == exercicio_id
+        ).all()
+        if not series:
+            return JSONResponse(status_code=404, content={"message": "series não encontradas"})
+        for serie in series:
+            sessao.delete(serie)
+
+        sessao.commit()
+
+        return {"message": "exercicio deletado com sucesso"}
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(status_code=500, content={"error": str(e)})
 #----------------------------
 
 if __name__ == "__main__":

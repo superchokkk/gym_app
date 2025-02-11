@@ -30,7 +30,6 @@ class _TreinosPageState extends State<TreinoPage> {
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
-    //final double screenHeight = screenSize.height;
     double screenWidth = screenSize.width;
 
     return Scaffold(
@@ -39,12 +38,14 @@ class _TreinosPageState extends State<TreinoPage> {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: ColorsConst.blacksBackgroundsSplashPage,
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+        colors: ColorsConst.blacksBackgroundsSplashPage,
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
           ),
         ),
-        child: Stack(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: Stack(
           children: [
             Positioned(
               top: 30,
@@ -133,6 +134,7 @@ class _TreinosPageState extends State<TreinoPage> {
           ],
         ),
       ),
+    ),
     );
   }
 }

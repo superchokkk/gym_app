@@ -4,9 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
-import 'package:gym_management/pages/dashboard_page/DashboardPage.dart';
 import 'package:gym_management/pages/login_page/senhaPage.dart';
-import 'package:gym_management/pages/onBordingPages/onBordingP2.dart';
 import 'cpfEmail.dart';
 import 'ncadastrado.dart';
 import 'perguntas.dart';
