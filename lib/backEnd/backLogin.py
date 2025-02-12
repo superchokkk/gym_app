@@ -6,8 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from datetime import date
+from confg import DATABASE_URL;
 
-db = create_engine("mysql+mysqlconnector://root:@localhost:3306/testeacademia", echo=True)
+db = create_engine(DATABASE_URL, echo=True)
 Session = sessionmaker(bind=db)
 
 def get_session():
@@ -169,6 +170,47 @@ def obtemTreinos(ref: GetReferencia, sessao: Session = Depends(get_session)):
 class GetReferencia(BaseModel):
     referencia: int
 #---------------------------
+@app.post("/adicionarTreino/{id_cliente}/{nome}")
+def adicionarTreinoCliente(id_cliente: int, nome: str, sessao: Session = Depends(get_session)):
+    try:
+        novo_treino = Treino(id_cliente=id_cliente, nome=nome)
+        sessao.add(novo_treino)
+        sessao.commit()
+        return JSONResponse(
+            status_code=200,
+            content={"message": "treino adicionado com sucesso"}
+        )
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao adicionar treino: {str(e)}"}
+        )
+#----------------------------
+@app.delete("/deletarTreino/{treino_id}")
+def deletarExercicioTreino(treino_id: int, sessao: Session = Depends(get_session)):
+    try:
+        treino = sessao.query(Treino).filter(
+            TreinoExercicio.id_treino == treino_id,
+        ).first()
+        if not treino:
+            return JSONResponse(status_code=404, content={"message": "series não encontradas"})
+        
+        exercicios = sessao.query(TreinoExercicio).filter(
+            TreinoExercicio.id_treino == treino_id).all()
+        
+        for serie in exercicios:
+            sessao.delete(serie)
+        sessao.commit()
+
+        sessao.delete(treino)
+        sessao.commit()
+
+        return {"message": "exercicio deletado com sucesso"}
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(status_code=500, content={"error": str(e)})
+#----------------------------
 @app.post("/buscaExercicios")
 def obtemExercicios(ref: GetReferencia, sessao: Session = Depends(get_session)):
     try:

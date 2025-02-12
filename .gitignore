@@ -32,6 +32,12 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Database configuration
+**/confg.py
+**/config.py
+**/config.*.py
+!**/config.template.py
+
 # Symbolication related
 app.*.symbols
 

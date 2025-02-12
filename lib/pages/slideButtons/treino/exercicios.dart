@@ -290,50 +290,50 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
       ),
       //botão de adicionar
       floatingActionButton: Container(
-  width: 56.0,
-  height: 56.0,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    gradient: const LinearGradient(
-      colors: [Colors.red, Colors.redAccent],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.red.withOpacity(0.3),
-        spreadRadius: 2,
-        blurRadius: 6,
-        offset: const Offset(0, 3),
-      ),
-    ],
-  ),
-  child: FloatingActionButton(
-    onPressed: () async {
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ListaExercicios(
-            treinoId: widget.treinoId,
-            treinoNome: widget.treinoNome,
+        width: 56.0,
+        height: 56.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: const LinearGradient(
+            colors: [Colors.red, Colors.redAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.red.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ListaExercicios(
+                  treinoId: widget.treinoId,
+                  treinoNome: widget.treinoNome,
+                ),
+              ),
+            );
+            if (result == true && mounted) {
+              setState(() {
+                exerciciosFuture = fetchExercicio(widget.treinoId);
+              });
+            }
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 32,
           ),
         ),
-      );
-      if (result == true && mounted) {
-        setState(() {
-          exerciciosFuture = fetchExercicio(widget.treinoId);
-        });
-      }
-    },
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    child: const Icon(
-      Icons.add,
-      color: Colors.white,
-      size: 32,
-    ),
-  ),
-),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
