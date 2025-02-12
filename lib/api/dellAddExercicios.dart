@@ -20,10 +20,11 @@ Future<bool> deletarExercicio(int id_treino, int id_exercicio) async {
   }
 }
 
-void adicionarExercicio(int treinoId, int exercicioId, int reps, int peso) async {
+Future<void> adicionarExercicio(int treinoId, int exercicioId) async {
   try {
+    int aux = 0;
     final response = await http.post(
-      Uri.parse('http://localhost:57800/adicionarSerie/$treinoId/$exercicioId/$reps/$peso'),
+      Uri.parse('http://localhost:57800/adicionarSerie/$treinoId/$exercicioId/$aux/$aux'),
     );
     print('Status code: ${response.statusCode}');
     

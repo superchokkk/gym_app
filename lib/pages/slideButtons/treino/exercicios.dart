@@ -4,6 +4,7 @@ import '../../../domain/models/Exercicio.dart';
 import '../../../api/perguntasExercicio.dart';
 import '../treino/especifico.dart';
 import '../../../api/dellAddExercicios.dart';
+import '../treino/listaExercicios.dart';
 
 class ExerciciosPage extends StatefulWidget {
   final int treinoId;
@@ -22,8 +23,6 @@ class ExerciciosPage extends StatefulWidget {
 class _ExerciciosPageState extends State<ExerciciosPage> {
   late Future<List<Exercicio>> exerciciosFuture;
   int flagView = 0;
-  final TextEditingController _repsController = TextEditingController();
-  final TextEditingController _pesoController = TextEditingController();
 
   @override
   void initState() {
@@ -49,68 +48,67 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
     }
 
     Future<void> _confirmaDelet(Exercicio exercise) async {
-    bool? confirmDelete = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.grey[900],
-          title: const Text(
-            'Confirmar exclusão',
-            style: TextStyle(color: Colors.white),
-          ),
-          content: const Text(
-            'Deseja realmente excluir esse exercicio?',
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.white),
+      bool? confirmDelete = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.grey[900],
+            title: const Text(
+              'Confirmar exclusão',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: const Text(
+              'Deseja realmente excluir esse exercicio?',
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text(
-                'Excluir',
-                style: TextStyle(color: Colors.red),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text(
+                  'Excluir',
+                  style: TextStyle(color: Colors.red),
+                ),
               ),
-            ),
-          ],
-        );
-      },
-    );
-    if (confirmDelete == true) {
-      final success = await deletarExercicio(widget.treinoId, exercise.id);
-      if (success) {
-        setState(() {
-          exerciciosFuture =
-              fetchExercicio(widget.treinoId);
-        });
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Exercício excluído com sucesso!'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
+            ],
           );
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Erro ao excluir exercício'),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 2),
-            ),
-          );
+        },
+      );
+      if (confirmDelete == true) {
+        final success = await deletarExercicio(widget.treinoId, exercise.id);
+        if (success) {
+          setState(() {
+            exerciciosFuture = fetchExercicio(widget.treinoId);
+          });
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Exercício excluído com sucesso!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Erro ao excluir exercício'),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
         }
       }
     }
-  }
-  
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -257,21 +255,19 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
                                             padding: const EdgeInsets.only(
                                                 right: 16.0),
                                             child: SizedBox(
-                                              width:
-                                                  24, // Tamanho fixo para o ícone
+                                              width: 24,
                                               height: 24,
                                               child: IconButton(
                                                 icon: const Icon(
                                                   Icons.delete,
                                                   color: Colors.red,
-                                                  size: 24, // Tamanho do ícone
+                                                  size: 24,
                                                 ),
                                                 onPressed: () =>
                                                     _confirmaDelet(exercicio),
-                                                padding: EdgeInsets
-                                                    .zero, // Remove o padding padrão do IconButton
+                                                padding: EdgeInsets.zero,
                                                 constraints:
-                                                    const BoxConstraints(), // Remove as restrições de tamanho padrão
+                                                    const BoxConstraints(),
                                               ),
                                             ),
                                           )
@@ -294,39 +290,51 @@ class _ExerciciosPageState extends State<ExerciciosPage> {
       ),
       //botão de adicionar
       floatingActionButton: Container(
-        width: 56.0,
-        height: 56.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: const LinearGradient(
-            colors: [Colors.red, Colors.redAccent],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.red.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () {
-            
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 32,
-          ),
-        ),
+  width: 56.0,
+  height: 56.0,
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    gradient: const LinearGradient(
+      colors: [Colors.red, Colors.redAccent],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.red.withOpacity(0.3),
+        spreadRadius: 2,
+        blurRadius: 6,
+        offset: const Offset(0, 3),
       ),
+    ],
+  ),
+  child: FloatingActionButton(
+    onPressed: () async {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ListaExercicios(
+            treinoId: widget.treinoId,
+            treinoNome: widget.treinoNome,
+          ),
+        ),
+      );
+      if (result == true && mounted) {
+        setState(() {
+          exerciciosFuture = fetchExercicio(widget.treinoId);
+        });
+      }
+    },
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    child: const Icon(
+      Icons.add,
+      color: Colors.white,
+      size: 32,
+    ),
+  ),
+),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
-    
   }
 }

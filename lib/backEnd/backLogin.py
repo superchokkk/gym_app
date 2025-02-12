@@ -77,8 +77,8 @@ class Exercicio(base):
     grupo = relationship("GrupoMuscular", back_populates="exercicio")
 
     def __init__(self, id_grupo, nome):
-        self.id_cliente = id_grupo
         self.nome = nome
+        self.id_grupo = id_grupo
 
 #classe treino exercicio
 class TreinoExercicio(base):
@@ -173,7 +173,11 @@ class GetReferencia(BaseModel):
 def obtemExercicios(ref: GetReferencia, sessao: Session = Depends(get_session)):
     try:
         referencia = ref.referencia
-        consulta = sessao.query(Exercicio).join(TreinoExercicio, Exercicio.id == TreinoExercicio.id_exercicio).join(Treino, TreinoExercicio.id_treino == Treino.id).filter(Treino.id == referencia).group_by(TreinoExercicio.id_exercicio)
+        consulta = sessao.query(Exercicio)\
+            .join(TreinoExercicio, Exercicio.id == TreinoExercicio.id_exercicio)\
+            .join(Treino, TreinoExercicio.id_treino == Treino.id)\
+            .filter(Treino.id == referencia)\
+            .group_by(TreinoExercicio.id_exercicio)
         exercicios = consulta.all()
         if not exercicios:
             return []
@@ -188,13 +192,83 @@ def obtemExercicios(ref: GetReferencia, sessao: Session = Depends(get_session)):
     except Exception as e:
         return {"error":  str(e)}
 #----------------------------
+@app.get("/buscaExerciciosAll")
+def busca_exercicios_all(sessao: Session = Depends(get_session)):
+    try:
+        exercicios = (
+            sessao.query(
+                Exercicio.id,
+                Exercicio.nome,
+                Exercicio.id_grupo,
+                GrupoMuscular.nome.label('nome_grupo')
+            )
+            .join(GrupoMuscular, Exercicio.id_grupo == GrupoMuscular.id)
+            .all()
+        )
+        resultado = [
+            {
+                "id": exercicio.id,
+                "nome": exercicio.nome,
+                "id_grupo": exercicio.id_grupo,
+                "nome_grupo": exercicio.nome_grupo,
+            }
+            for exercicio in exercicios
+        ]
+
+        return resultado
+
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao buscar exercícios: {str(e)}"}
+        )
+#----------------------------
+@app.delete("/deletarExercicio/{treino_id}/{exercicio_id}")
+def deletarExercicioTreino(treino_id: int, exercicio_id: int, sessao: Session = Depends(get_session)):
+    try:
+        series = sessao.query(TreinoExercicio).filter(
+            TreinoExercicio.id_treino == treino_id,
+            TreinoExercicio.id_exercicio == exercicio_id
+        ).all()
+        if not series:
+            return JSONResponse(status_code=404, content={"message": "series não encontradas"})
+        for serie in series:
+            sessao.delete(serie)
+
+        sessao.commit()
+
+        return {"message": "exercicio deletado com sucesso"}
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(status_code=500, content={"error": str(e)})
+#----------------------------
+@app.post("/adicionarExercicio/{nome}/{id_grupo}")
+def adicionarExercicio(nome: str, id_grupo: int, sessao: Session = Depends(get_session)):
+    try:
+        novo_exercicio = Exercicio(id_grupo=id_grupo, nome=nome)
+        sessao.add(novo_exercicio)
+        sessao.commit()
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Exercício adicionado com sucesso"}
+        )
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao adicionar exercício: {str(e)}"}
+        )
+#----------------------------
 @app.get("/buscaEspecifico/{treino_id}/{exercicio_id}")
 async def obtemExercicioEspecifico(treino_id: int, exercicio_id: int, sessao: Session = Depends(get_session)):
     try:
         query = sessao.query(TreinoExercicio).filter(
             TreinoExercicio.id_treino == treino_id,
             TreinoExercicio.id_exercicio == exercicio_id
-        ).order_by(TreinoExercicio.data)
+        )\
+        .filter(TreinoExercicio.reps != 0)\
+        .order_by(TreinoExercicio.data)
 
         resultados = query.all()
 
@@ -232,24 +306,22 @@ def adicionarSerie(treino_id: int, exercicio_id: int, reps: int, peso: int, sess
         sessao.rollback()
         return JSONResponse(status_code=500, content={"error": str(e)})
 #----------------------------
-@app.delete("/deletarExercicio/{treino_id}/{exercicio_id}")
-def deletarExercicioTreino(treino_id: int, exercicio_id: int, sessao: Session = Depends(get_session)):
+@app.get("/achaGrupo/{nome}")
+def achar(nome: str, sessao: Session = Depends(get_session)):
     try:
-        series = sessao.query(TreinoExercicio).filter(
-            TreinoExercicio.id_treino == treino_id,
-            TreinoExercicio.id_exercicio == exercicio_id
-        ).all()
-        if not series:
-            return JSONResponse(status_code=404, content={"message": "series não encontradas"})
-        for serie in series:
-            sessao.delete(serie)
-
-        sessao.commit()
-
-        return {"message": "exercicio deletado com sucesso"}
+        grupo = sessao.query(GrupoMuscular).filter(GrupoMuscular.nome == nome).first()
+        if grupo is None:
+            return JSONResponse(
+                status_code=404, 
+                content={"error": "Grupo muscular não encontrado"}
+            )
+        return grupo.id
     except Exception as e:
         sessao.rollback()
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return JSONResponse(
+            status_code=500, 
+            content={"error": str(e)}
+        )
 #----------------------------
 
 if __name__ == "__main__":
