@@ -8,9 +8,12 @@ import '../../../api/dellAddTreino.dart';
 
 class TreinoPage extends StatefulWidget {
   final int clienteId;
+  final int clienteNivel;
+
   const TreinoPage({
     Key? key,
     required this.clienteId,
+    required this.clienteNivel,
   }) : super(key: key);
 
   @override
@@ -27,7 +30,7 @@ class _TreinosPageState extends State<TreinoPage> {
   void initState() {
     super.initState();
     treinosFuture = fetchTreinos(widget.clienteId);
-    btnconfg = ButtonConfigs(identidificador: widget.clienteId);
+    btnconfg = ButtonConfigs(identidificador: widget.clienteId, clienteNivel: widget.clienteNivel);
   }
 
   @override

@@ -8,18 +8,24 @@ import 'package:gym_management/pages/dashboard_page/slider/dots/DotsSliderContro
 import 'package:gym_management/pages/dashboard_page/slider/img_slide/ImageSlide.dart';
 
 class DashboardSlider extends StatefulWidget {
-  const DashboardSlider({super.key});
+  final int clienteId;
+  final int clienteNivel;
+
+  const DashboardSlider({
+    super.key,
+    required this.clienteId,
+    required this.clienteNivel,
+  });
 
   @override
   State<DashboardSlider> createState() => _DashboardSliderState();
 }
 
 class _DashboardSliderState extends State<DashboardSlider> {
-
-  ButtonConfigs navBtn = ButtonConfigs(identidificador: 2);
+  late int ClienteNivel;
+  late ButtonConfigs navBtn;
 
   final List<String> imagePaths = [
-    'assets/img/bfimage.png',
     'assets/img/women-tredmill.png',
   ];
   int _currentIndex = 0;
@@ -29,8 +35,15 @@ class _DashboardSliderState extends State<DashboardSlider> {
   @override
   void initState() {
     super.initState();
+    ClienteNivel = widget.clienteNivel;
+    navBtn = ButtonConfigs(
+      identidificador: widget.clienteId, 
+      clienteNivel: ClienteNivel
+    );
     _slides = List.generate(
-        imagePaths.length, (index) => ImageSlide(imagePath: imagePaths[index]));
+      imagePaths.length, 
+      (index) => ImageSlide(imagePath: imagePaths[index])
+    );
   }
 
   @override

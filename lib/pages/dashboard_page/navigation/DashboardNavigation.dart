@@ -7,13 +7,15 @@ import 'package:gym_management/pages/dashboard_page/navigation/DashboardNavigati
 
 class DashboardNavigation extends StatelessWidget {
   final int clienteId;
+  final int clienteNivel;
   late final ButtonConfigs btnConfig;
 
   DashboardNavigation({
     super.key,
     required this.clienteId,
+    required this.clienteNivel,
   }) {
-    btnConfig = ButtonConfigs(identidificador: clienteId);
+    btnConfig = ButtonConfigs(identidificador: clienteId, clienteNivel: clienteNivel);
   }
 
   @override

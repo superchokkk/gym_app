@@ -25,7 +25,7 @@ class DashboardHeader extends StatelessWidget {
             height: 250,
           ),
           Align(
-            alignment: Alignment.centerLeft, // Alinha no canto esquerdo
+            alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.only(top: 18, left: 18),
               child: SizedBox(

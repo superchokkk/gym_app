@@ -36,25 +36,29 @@ class _DashboardPageState extends State<DashboardPage> {
                 children: <Widget>[
                   // Header
                   DashboardHeader(cliente: widget.cliente),
-                  
+
                   // Navigation
                   Padding(
                     padding: EdgeInsets.symmetric(
                       vertical: screenHeight * 0.02,
                       horizontal: 16,
                     ),
-                    child: DashboardNavigation(clienteId: widget.cliente.id),
+                    child: DashboardNavigation(
+                        clienteId: widget.cliente.id,
+                        clienteNivel: widget.cliente.nivel),
                   ),
-                  
+
                   // Slides
                   Padding(
                     padding: EdgeInsets.symmetric(
                       vertical: screenHeight * 0.01,
                       horizontal: 8,
                     ),
-                    child: const DashboardSlider(),
+                    child: DashboardSlider(
+                        clienteId: widget.cliente.id,
+                        clienteNivel: widget.cliente.nivel),
                   ),
-                  
+
                   // Footer buttons
                   Padding(
                     padding: EdgeInsets.only(

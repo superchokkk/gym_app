@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from datetime import date
 from confg import DATABASE_URL;
+from datetime import datetime
 
 db = create_engine(DATABASE_URL, echo=True)
 Session = sessionmaker(bind=db)
@@ -31,6 +32,7 @@ class Cliente(base):
     idade = Column('idade', Integer)
     peso = Column('peso', Double)
     altura = Column('altura', Integer)
+    data_pgto = Column('data_pgto', Date, default=date.today)
 
     treinos = relationship("Treino", back_populates="cliente")
 
@@ -43,6 +45,7 @@ class Cliente(base):
         self.idade = idade
         self.peso = peso
         self.altura = altura
+        self.data_pgto = date.today()
 
 #classe treino
 class Treino(base):
@@ -117,6 +120,8 @@ app.add_middleware(
 #---------------------------
 class getId(BaseModel):
     busca: str
+class getId2(BaseModel):
+    busca: int
 
 @app.post("/buscaCliente")
 def obterCliente(request: getId, sessao: Session = Depends(get_session)):
@@ -126,9 +131,10 @@ def obterCliente(request: getId, sessao: Session = Depends(get_session)):
         
         if not client:
             return {
-                "id":    0, "nome":  "", "cpf":   "",
+                "id": 0, "nome": "", "cpf": "",
                 "email": "", "senha": "", "nivel": 9,
-                "idade": 0, "peso":  0, "altura":0, 
+                "idade": 0, "peso": 0, "altura": 0,
+                "data": ""
             }
         return {
             "id": client.id,
@@ -140,12 +146,42 @@ def obterCliente(request: getId, sessao: Session = Depends(get_session)):
             "idade": client.idade,
             "peso": client.peso,
             "altura": client.altura,
-            
+            "data": client.data_pgto.strftime("%m/%Y") if client.data_pgto else ""
         }
     except Exception as e:
         return {"error": str(e)}
 
 #---------------------------   
+@app.post("/buscaClienteId")
+def obterClienteId(request: getId2, sessao: Session = Depends(get_session)):
+    try:
+        referencia = request.busca
+        client = sessao.query(Cliente).filter(Cliente.id == referencia).first()
+        
+        if not client:
+            return {
+                "id": 0, "nome": "", "cpf": "",
+                "email": "", "senha": "", "nivel": 9,
+                "idade": 0, "peso": 0, "altura": 0,
+                "data": ""
+            }
+        return {
+            "id": client.id,
+            "nome": client.nome,
+            "cpf": client.cpf,
+            "email": client.email,
+            "senha": client.senha,
+            "nivel": client.nivel,
+            "idade": client.idade,
+            "peso": client.peso,
+            "altura": client.altura,
+            "data": client.data_pgto.strftime("%m/%Y")
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+#---------------------------   
+
 class GetReferencia(BaseModel):
     referencia: int
 #---------------------------
@@ -363,6 +399,32 @@ def achar(nome: str, sessao: Session = Depends(get_session)):
         return JSONResponse(
             status_code=500, 
             content={"error": str(e)}
+        )
+#----------------------------
+@app.post("/atualizarDataPgto/{cliente_id}")
+def atualizar_data_pgto(cliente_id: int, sessao: Session = Depends(get_session)):
+    try:
+        cliente = sessao.query(Cliente).filter(Cliente.id == cliente_id).first()
+        
+        if not cliente:
+            return JSONResponse(
+                status_code=404,
+                content={"message": "Cliente não encontrado"}
+            )
+            
+        cliente.data_pgto = datetime.now()
+        sessao.commit()
+        
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Data de pagamento atualizada com sucesso"}
+        )
+        
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao atualizar data: {str(e)}"}
         )
 #----------------------------
 
