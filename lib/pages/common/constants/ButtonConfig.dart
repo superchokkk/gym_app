@@ -3,14 +3,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gym_management/pages/dashboard_page/navigation/NavigationItem.dart';
 import '../../slideButtons/treino/treino.dart';
 import '../../slideButtons/pagamento/status.dart';
+import '../../slideButtons/profissionais/listaProficionais.dart';
 
 class ButtonConfigs {
   final int identidificador;
-  final int clienteNivel;  // Add clienteNivel parameter
+  final int clienteNivel;
   
   ButtonConfigs({
     required this.identidificador, 
-    required this.clienteNivel,  // Add to constructor
+    required this.clienteNivel,
   });
 
   List<NavigationItem> get dashboardNavigationItems {
@@ -43,8 +44,13 @@ class ButtonConfigs {
           text: 'Profissionais',
           icon: FontAwesomeIcons.userTie,
           onPressed: (context) {
-            Navigator.pushNamed(context, '/treino');
-          },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListaProfissionaisPage(),
+            ),
+          );
+        },
         ),
     ];
     if (clienteNivel != 3) {

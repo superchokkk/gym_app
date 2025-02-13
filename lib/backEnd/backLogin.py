@@ -181,7 +181,59 @@ def obterClienteId(request: getId2, sessao: Session = Depends(get_session)):
         return {"error": str(e)}
 
 #---------------------------   
+@app.post("/atualizarDataPgto/{cliente_id}")
+def atualizarFataPgto(cliente_id: int, sessao: Session = Depends(get_session)):
+    try:
+        cliente = sessao.query(Cliente).filter(Cliente.id == cliente_id).first()
+        
+        if not cliente:
+            return JSONResponse(
+                status_code=404,
+                content={"message": "Cliente não encontrado"}
+            )
+            
+        cliente.data_pgto = datetime.now()
+        sessao.commit()
+        
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Data de pagamento atualizada com sucesso"}
+        )
+        
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao atualizar data: {str(e)}"}
+        )
+#----------------------------
+@app.get("/buscaFuncionarios")
+def buscaFuncionarios(sessao: Session = Depends(get_session)):
+    try:
+        funcionarios = sessao.query(Cliente).filter(Cliente.nivel == 2).all()
+        
+        if not funcionarios:
+            return []
+            
+        return [
+            {
+                "id": func.id,
+                "nome": func.nome,
+                "email": func.email,
+                "idade": func.idade,
+                "nivel": func.nivel,
+                "data": func.data_pgto.strftime("%m/%Y") if func.data_pgto else ""
+            }
+            for func in funcionarios
+        ]
 
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao buscar funcionários: {str(e)}"}
+        )
+#----------------------------
 class GetReferencia(BaseModel):
     referencia: int
 #---------------------------
@@ -399,32 +451,6 @@ def achar(nome: str, sessao: Session = Depends(get_session)):
         return JSONResponse(
             status_code=500, 
             content={"error": str(e)}
-        )
-#----------------------------
-@app.post("/atualizarDataPgto/{cliente_id}")
-def atualizar_data_pgto(cliente_id: int, sessao: Session = Depends(get_session)):
-    try:
-        cliente = sessao.query(Cliente).filter(Cliente.id == cliente_id).first()
-        
-        if not cliente:
-            return JSONResponse(
-                status_code=404,
-                content={"message": "Cliente não encontrado"}
-            )
-            
-        cliente.data_pgto = datetime.now()
-        sessao.commit()
-        
-        return JSONResponse(
-            status_code=200,
-            content={"message": "Data de pagamento atualizada com sucesso"}
-        )
-        
-    except Exception as e:
-        sessao.rollback()
-        return JSONResponse(
-            status_code=500,
-            content={"error": f"Erro ao atualizar data: {str(e)}"}
         )
 #----------------------------
 
