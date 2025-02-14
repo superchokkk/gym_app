@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import '../../../domain/models/Cliente.dart';
 import '../../../api/mudarStatus.dart';
-
+import '../../../api/perguntasSlideCliente.dart';
 
 class StatusPage extends StatefulWidget {
   final int clienteId;
@@ -101,11 +101,12 @@ class _StatusPageState extends State<StatusPage> {
                           final cliente = snapshot.data!;
                           final now = DateTime.now();
 
+// Convertendo a string de data para DateTime
                           final dataParts = cliente.data.split('/');
                           final clienteData = DateTime(
-                              int.parse(dataParts[1]),
-                              int.parse(dataParts[0]),
-                              1
+                              int.parse(dataParts[2]), // Ano
+                              int.parse(dataParts[1]), // Mês
+                              int.parse(dataParts[0]) // Dia
                               );
 
                           String statusText;
@@ -126,8 +127,7 @@ class _StatusPageState extends State<StatusPage> {
 
                           return SingleChildScrollView(
                             child: Column(
-                              mainAxisSize: MainAxisSize
-                                  .min,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
                                   'Cliente: ${cliente.nome}',
@@ -160,12 +160,13 @@ class _StatusPageState extends State<StatusPage> {
                                 ),
                                 const SizedBox(height: 24),
                                 ElevatedButton(
-                                    onPressed: () async {
-                                    await atualizarDataPgto(cliente.id);
+                                  onPressed: () async {
+                                    await updateClientePgto(cliente.id, 1);
                                     setState(() {
-                                      clienteFuture = fecthClientesId(widget.clienteId);
+                                      clienteFuture =
+                                          fecthClientesId(widget.clienteId);
                                     });
-                                    },
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red[900],
                                     padding: const EdgeInsets.symmetric(

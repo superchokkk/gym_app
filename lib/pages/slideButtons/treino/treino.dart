@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import '../../../domain/models/Treino.dart';
 import '../../../api/perguntasTreino.dart';
-import '../../common/constants/ButtonConfig.dart';
 import '../treino/exercicios.dart';
 import '../../../api/dellAddTreino.dart';
 
 class TreinoPage extends StatefulWidget {
   final int clienteId;
-  final int clienteNivel;
 
   const TreinoPage({
     Key? key,
     required this.clienteId,
-    required this.clienteNivel,
   }) : super(key: key);
 
   @override
@@ -22,7 +19,6 @@ class TreinoPage extends StatefulWidget {
 
 class _TreinosPageState extends State<TreinoPage> {
   late Future<List<Treino>> treinosFuture;
-  late ButtonConfigs btnconfg;
   TextEditingController _NameController = TextEditingController();
   int flagView = 0;
 
@@ -30,7 +26,6 @@ class _TreinosPageState extends State<TreinoPage> {
   void initState() {
     super.initState();
     treinosFuture = fetchTreinos(widget.clienteId);
-    btnconfg = ButtonConfigs(identidificador: widget.clienteId, clienteNivel: widget.clienteNivel);
   }
 
   @override

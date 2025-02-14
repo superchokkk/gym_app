@@ -32,11 +32,11 @@ class Cliente(base):
     idade = Column('idade', Integer)
     peso = Column('peso', Double)
     altura = Column('altura', Integer)
-    data_pgto = Column('data_pgto', Date, default=date.today)
+    data_pgto = Column('data_pgto', Date, default=datetime.now)
 
     treinos = relationship("Treino", back_populates="cliente")
 
-    def __init__(self, nome, cpf, email, idade, peso, altura, senha, nivel):
+    def __init__(self, nome, cpf, email, idade, peso, altura, senha, nivel, data_pgto=None):
         self.nome = nome
         self.cpf = cpf
         self.email = email
@@ -45,7 +45,7 @@ class Cliente(base):
         self.idade = idade
         self.peso = peso
         self.altura = altura
-        self.data_pgto = date.today()
+        self.data_pgto = data_pgto or datetime.now()
 
 #classe treino
 class Treino(base):
@@ -146,7 +146,7 @@ def obterCliente(request: getId, sessao: Session = Depends(get_session)):
             "idade": client.idade,
             "peso": client.peso,
             "altura": client.altura,
-            "data": client.data_pgto.strftime("%m/%Y") if client.data_pgto else ""
+            "data": client.data_pgto.strftime("%d/%m/%Y") if client.data_pgto else ""
         }
     except Exception as e:
         return {"error": str(e)}
@@ -175,38 +175,87 @@ def obterClienteId(request: getId2, sessao: Session = Depends(get_session)):
             "idade": client.idade,
             "peso": client.peso,
             "altura": client.altura,
-            "data": client.data_pgto.strftime("%m/%Y")
+            "data": client.data_pgto.strftime("%d/%m/%Y") if client.data_pgto else ""
         }
     except Exception as e:
         return {"error": str(e)}
 
-#---------------------------   
-@app.post("/atualizarDataPgto/{cliente_id}")
-def atualizarFataPgto(cliente_id: int, sessao: Session = Depends(get_session)):
+#---------------------------
+@app.delete("/deletarCliente/{cliente_id}")
+def deletarCliente(cliente_id: int, sessao: Session = Depends(get_session)):
     try:
-        cliente = sessao.query(Cliente).filter(Cliente.id == cliente_id).first()
+        treinos = sessao.query(Treino).filter(Treino.id_cliente == cliente_id).all()
         
-        if not cliente:
+        # First delete all related TreinoExercicio records
+        for treino in treinos:
+            sessao.query(TreinoExercicio).filter(
+                TreinoExercicio.id_treino == treino.id
+            ).delete()
+            sessao.delete(treino)
+            
+        # Then delete the client
+        cliente = sessao.query(Cliente).filter(Cliente.id == cliente_id).first()
+        if cliente:
+            sessao.delete(cliente)
+            sessao.commit()
+            return JSONResponse(
+                status_code=200,
+                content={"message": "Cliente deletado com sucesso"}
+            )
+        else:
             return JSONResponse(
                 status_code=404,
                 content={"message": "Cliente não encontrado"}
             )
-            
-        cliente.data_pgto = datetime.now()
+        
+    except Exception as e:
+        sessao.rollback()
+        print(f"Erro ao deletar cliente: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao deletar cliente: {str(e)}"}
+        )
+#--------------------------- 
+class NovoCliente(BaseModel):
+    nome: str
+    cpf: str
+    email: str
+    senha: str
+    nivel: int
+    idade: int
+    peso: float
+    altura: float
+
+@app.post("/adicionarCliente")
+def adicionar_cliente(cliente: NovoCliente, sessao: Session = Depends(get_session)):
+    try:
+        novo_cliente = Cliente(
+            nome=cliente.nome,
+            cpf=cliente.cpf,
+            email=cliente.email,
+            senha=cliente.senha,
+            nivel=cliente.nivel,
+            idade=cliente.idade,
+            peso=cliente.peso,
+            altura=cliente.altura,
+        )
+        
+        sessao.add(novo_cliente)
         sessao.commit()
         
         return JSONResponse(
             status_code=200,
-            content={"message": "Data de pagamento atualizada com sucesso"}
+            content={"message": "Cliente adicionado com sucesso"}
         )
         
     except Exception as e:
         sessao.rollback()
+        print(f"Erro ao adicionar cliente: {str(e)}")
         return JSONResponse(
             status_code=500,
-            content={"error": f"Erro ao atualizar data: {str(e)}"}
+            content={"error": f"Erro ao adicionar cliente: {str(e)}"}
         )
-#----------------------------
+#--------------------------- 
 @app.get("/buscaFuncionarios")
 def buscaFuncionarios(sessao: Session = Depends(get_session)):
     try:
@@ -222,7 +271,6 @@ def buscaFuncionarios(sessao: Session = Depends(get_session)):
                 "email": func.email,
                 "idade": func.idade,
                 "nivel": func.nivel,
-                "data": func.data_pgto.strftime("%m/%Y") if func.data_pgto else ""
             }
             for func in funcionarios
         ]
@@ -234,6 +282,85 @@ def buscaFuncionarios(sessao: Session = Depends(get_session)):
             content={"error": f"Erro ao buscar funcionários: {str(e)}"}
         )
 #----------------------------
+@app.get("/buscaClientes")
+def buscaClientes(sessao: Session = Depends(get_session)):
+    try:
+        funcionarios = sessao.query(Cliente).filter(Cliente.nivel == 3).all()
+        
+        if not funcionarios:
+            return []
+            
+        return [
+            {
+                "id": func.id,
+                "nome": func.nome,
+                "cpf": func.cpf,
+                "email": func.email,
+                "nivel": func.nivel,
+                "idade": func.idade,
+                "peso": func.peso,
+                "altura": func.altura,
+                "data": func.data_pgto.strftime("%d/%m/%Y") if func.data_pgto else ""
+            }
+            for func in funcionarios
+        ]
+
+    except Exception as e:
+        sessao.rollback()
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao buscar funcionários: {str(e)}"}
+        )
+#----------------------------
+@app.post("/atualizarPgto/{cliente_id}/{flag}")
+def atualizarStatus(cliente_id: int, flag: int, sessao: Session = Depends(get_session)):
+    try:
+        cliente = sessao.query(Cliente).filter(Cliente.id == cliente_id).first()
+        
+        if not cliente:
+            return JSONResponse(
+                status_code=404,
+                content={"message": "Cliente não encontrado"}
+            )
+            
+        
+        now = datetime.now()
+        
+        if flag == 1: 
+            cliente.data_pgto = now
+        elif flag == 2:
+            if now.month == 1:
+                cliente.data_pgto = datetime(now.year - 1, 12, 1)
+            else:
+                cliente.data_pgto = datetime(now.year, now.month - 1, 1)
+        elif flag == 3:
+            year = now.year
+            month = now.month - 2
+            if month <= 0:
+                year = now.year - 1
+                month = 12 + month
+            cliente.data_pgto = datetime(year, month, 1)
+
+        else:
+            return JSONResponse(
+                status_code=400,
+                content={"message": "Status inválido"},
+            ) 
+        sessao.commit()
+        
+        return JSONResponse(
+            status_code=200,
+            content={"message": "Status atualizado com sucesso"}
+        )
+        
+    except Exception as e:
+        sessao.rollback()
+        print(f"Erro: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Erro ao atualizar status: {str(e)}"}
+        )
+#---------------------------
 class GetReferencia(BaseModel):
     referencia: int
 #---------------------------

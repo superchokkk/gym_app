@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import '../../../domain/models/Cliente.dart';
-import '../../../api/pergutaProfessores.dart';
+import '../../../api/perguntasSlideCliente.dart';
 
 class ListaProfissionaisPage extends StatefulWidget {
   const ListaProfissionaisPage({Key? key}) : super(key: key);
@@ -141,7 +141,7 @@ class _ListaProfissionaisPageState extends State<ListaProfissionaisPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Proficional: ${cliente.nome}',
+                                  'Profissional: ${cliente.nome}',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
