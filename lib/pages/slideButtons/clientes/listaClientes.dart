@@ -311,7 +311,7 @@ class _ListaclientesPageState extends State<ListaclientesPage> {
               style: TextStyle(color: Colors.white),
             ),
             content: const Text(
-              'Deseja realmente excluir esse treino?',
+              'Deseja realmente excluir esse cliente?',
               style: TextStyle(color: Colors.white),
             ),
             actions: [
@@ -343,7 +343,7 @@ class _ListaclientesPageState extends State<ListaclientesPage> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Treino excluído com sucesso!'),
+                content: Text('cliente excluído com sucesso!'),
                 backgroundColor: Colors.green,
                 duration: Duration(seconds: 2),
               ),
@@ -353,7 +353,7 @@ class _ListaclientesPageState extends State<ListaclientesPage> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Erro ao excluir treino'),
+                content: Text('Erro ao excluir cliente'),
                 backgroundColor: Colors.red,
                 duration: Duration(seconds: 2),
               ),
@@ -411,7 +411,7 @@ class _ListaclientesPageState extends State<ListaclientesPage> {
                 child: SizedBox(
                   width: 50,
                   height: 50,
-                  //botão de excluir serie
+                  //botão de excluir
                   child: ElevatedButton(
                     onPressed: () {
                       mudaFlag();

@@ -3,8 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gym_management/pages/dashboard_page/navigation/NavigationItem.dart';
 import '../../slideButtons/treino/treino.dart';
 import '../../slideButtons/pagamento/status.dart';
-import '../../slideButtons/profissionais/listaProficionais.dart' as profissionais;
+import '../../slideButtons/profissionais/listaProficionais.dart'
+    as profissionais;
 import '../../slideButtons/clientes/listaClientes.dart';
+import '../../slideButtons/profissionaisAdm/profissionaisAdm.dart';
 
 class ButtonConfigs {
   final int identidificador;
@@ -24,8 +26,7 @@ class ButtonConfigs {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TreinoPage(
-                  clienteId: identidificador),
+              builder: (context) => TreinoPage(clienteId: identidificador),
             ),
           );
         },
@@ -65,7 +66,8 @@ class ButtonConfigs {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ListaclientesPage(idAcesso: identidificador),
+                builder: (context) =>
+                    ListaclientesPage(idAcesso: identidificador),
               ),
             );
           },
@@ -73,16 +75,22 @@ class ButtonConfigs {
       );
     }
     if (clienteNivel == 1) {
-      items.add(
-        NavigationItem(
-          text: '+Profissionais',
-          icon: FontAwesomeIcons.userPen,
-          onPressed: (context) {
-            Navigator.pushNamed(context, '/treino');
-          },
-        ),
-      );
-    }
+  items.add(
+    NavigationItem(
+      text: '+Profissionais',
+      icon: FontAwesomeIcons.userPen,
+      onPressed: (context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ListaFuncionariossPage(idAcesso: identidificador),  // Removed const and fixed class name
+          ),
+        );
+      },
+    ),
+  );
+}
+
     return items;
   }
 

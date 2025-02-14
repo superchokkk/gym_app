@@ -25,7 +25,7 @@ class Cliente(base):
     __tablename__ = 'clientes'
     id = Column('id', Integer, primary_key=True, autoincrement=True)
     nome = Column('nome', String(100), nullable=False)
-    cpf = Column('cpf', Integer, unique=True, nullable=False)
+    cpf = Column('cpf', String(11), unique=True, nullable=False)
     email = Column('email', String(100), unique=True, nullable=False)
     senha = Column('senha', String(100), nullable=False)
     nivel = Column('nivel', Integer, nullable=False)
@@ -227,17 +227,29 @@ class NovoCliente(BaseModel):
     altura: float
 
 @app.post("/adicionarCliente")
-def adicionar_cliente(cliente: NovoCliente, sessao: Session = Depends(get_session)):
+def adicionar_cliente(cliente: dict, sessao: Session = Depends(get_session)):
     try:
+        # Check if CPF already exists
+        existing_cliente = sessao.query(Cliente).filter(
+            Cliente.cpf == cliente['cpf']
+        ).first()
+        
+        if existing_cliente:
+            return JSONResponse(
+                status_code=400,
+                content={"error": "CPF já cadastrado"}
+            )
+            
         novo_cliente = Cliente(
-            nome=cliente.nome,
-            cpf=cliente.cpf,
-            email=cliente.email,
-            senha=cliente.senha,
-            nivel=cliente.nivel,
-            idade=cliente.idade,
-            peso=cliente.peso,
-            altura=cliente.altura,
+            nome=cliente['nome'],
+            cpf=cliente['cpf'],  # Keep as string
+            email=cliente['email'],
+            senha=cliente['senha'],
+            nivel=cliente['nivel'],
+            idade=cliente['idade'],
+            peso=cliente['peso'],
+            altura=cliente['altura'],
+            data_pgto=datetime.now()
         )
         
         sessao.add(novo_cliente)

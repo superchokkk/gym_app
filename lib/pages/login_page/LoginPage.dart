@@ -1,7 +1,6 @@
 // ignore_for_file: file_names
 
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:gym_management/pages/common/constants/ColorsConst.dart';
 import 'package:gym_management/pages/login_page/senhaPage.dart';
@@ -10,6 +9,7 @@ import 'ncadastrado.dart';
 import 'perguntas.dart';
 import '../../../api/perguntasLogin.dart';
 import '../../domain/models/Cliente.dart';
+import '../login_page/vencido.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -37,12 +37,31 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final cliente = await ponteLogin(userEmailCpf);
       if (cliente.id != 0) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Senhapage(cliente: cliente),
-          ),
+        //ver status do cliente
+        final now = DateTime.now();
+        final dataParts = cliente.data.split('/');
+        final clienteData = DateTime(
+          int.parse(dataParts[2]), // ano
+          int.parse(dataParts[1]), // mês
+          int.parse(dataParts[0]), // dia
         );
+        if (clienteData.year == now.year && clienteData.month == now.month ||
+            clienteData.year == now.year && clienteData.month == now.month - 1) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Senhapage(cliente: cliente),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VencidoPage(),
+            ),
+          );
+        }
+        //---------------------
       } else {
         Navigator.pushReplacement(
           context,
@@ -113,8 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                           PerguntaLogin(
                             key: ValueKey(corPergunta),
                             cor: corPergunta,
-                            labelText:
-                                'cpf',
+                            labelText: 'cpf',
                             onValueChanged: (valor) {
                               setState(() {
                                 userEmailCpf = valor;
