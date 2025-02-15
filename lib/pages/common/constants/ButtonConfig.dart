@@ -3,9 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gym_management/pages/dashboard_page/navigation/NavigationItem.dart';
 import '../../slideButtons/treino/treino.dart';
 import '../../slideButtons/pagamento/status.dart';
-import '../../slideButtons/profissionais/listaProficionais.dart'
-    as profissionais;
-import '../../slideButtons/clientes/listaClientes.dart';
+import '../../slideButtons/profissionais/listaProficionais.dart' as profissionais;
+import '../../slideButtons/clientes/listaClientes.dart' as clientes;
 import '../../slideButtons/profissionaisAdm/profissionaisAdm.dart';
 
 class ButtonConfigs {
@@ -57,6 +56,7 @@ class ButtonConfigs {
           },
         ),
     ];
+
     if (clienteNivel != 3) {
       items.add(
         NavigationItem(
@@ -66,40 +66,45 @@ class ButtonConfigs {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    ListaclientesPage(idAcesso: identidificador),
+                builder: (context) => clientes.ListaclientesPage(idAcesso: identidificador),
               ),
             );
           },
         ),
       );
     }
+
     if (clienteNivel == 1) {
-  items.add(
-    NavigationItem(
-      text: '+Profissionais',
-      icon: FontAwesomeIcons.userPen,
-      onPressed: (context) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ListaFuncionariossPage(idAcesso: identidificador),  // Removed const and fixed class name
-          ),
-        );
-      },
-    ),
-  );
-}
+      items.add(
+        NavigationItem(
+          text: '+Profissionais',
+          icon: FontAwesomeIcons.userPen,
+          onPressed: (context) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ListaFuncionariossPage(idAcesso: identidificador),
+              ),
+            );
+          },
+        ),
+      );
+    }
 
     return items;
   }
-
+//botão treino
   List<Map<String, dynamic>> get dashboardSliderButtonsConfig => [
-        {
-          'text': 'Adicionar Treino',
-          'onPressed': () {
-            print('Botão de adicionar treino pressionado');
-          },
-        }
-      ];
+    {
+      'text': 'Treinos',
+      'onPressed': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TreinoPage(clienteId: identidificador),
+          ),
+        );
+      },
+    }
+  ];
 }

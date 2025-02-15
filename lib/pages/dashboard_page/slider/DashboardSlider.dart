@@ -37,13 +37,9 @@ class _DashboardSliderState extends State<DashboardSlider> {
     super.initState();
     ClienteNivel = widget.clienteNivel;
     navBtn = ButtonConfigs(
-      identidificador: widget.clienteId, 
-      clienteNivel: ClienteNivel
-    );
+        identidificador: widget.clienteId, clienteNivel: ClienteNivel);
     _slides = List.generate(
-      imagePaths.length, 
-      (index) => ImageSlide(imagePath: imagePaths[index])
-    );
+        imagePaths.length, (index) => ImageSlide(imagePath: imagePaths[index]));
   }
 
   @override
@@ -67,16 +63,18 @@ class _DashboardSliderState extends State<DashboardSlider> {
                     alignment: Alignment.bottomCenter,
                     children: [
                       _slides[index],
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: DashboardImageBtn(
-                            btnText: Text(
-                              navBtn.dashboardSliderButtonsConfig[index]['text'],
-                              style: TextStylesConst.dashboardSliderBtnTextStyle,
-                            ),
-                            onPressed: navBtn.dashboardSliderButtonsConfig[index]['onPressed'],
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child : DashboardImageBtn(
+                          btnText: Text(
+                            navBtn.dashboardSliderButtonsConfig[index]['text'],
+                            style: TextStylesConst.dashboardSliderBtnTextStyle,
                           ),
+                          onPressed: () =>
+                              navBtn.dashboardSliderButtonsConfig[index]
+                                  ['onPressed'](context),
                         ),
+                      ),
                     ],
                   );
                 },

@@ -13,10 +13,8 @@ Future<Cliente> fecthClientesId(int ref) async {
       headers: {'Content-Type': 'application/json'},
       body: parametro,
     );
-    print('Response status: ${response.statusCode}');
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print('JSON recebido: $data');
       return Cliente.fromJson(data);
     } else {
       throw Exception('API Error: ${response.statusCode}');
